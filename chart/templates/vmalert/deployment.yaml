@@ -1,9 +1,10 @@
 {{ range $rsName, $rs := .Values.remoteStorages }}
 {{- if $rs.readURL -}}
+{{ range $replica := until ($.Values.readReplicas | default 1 | int) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "prometheus-benchmark.fullname" $ }}-vmalert-{{ $rsName }}
+  name: {{ include "prometheus-benchmark.fullname" $ }}-vmalert-{{ $rsName }}-replica-{{ $replica }}
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "prometheus-benchmark.labels" $ | nindent 4 }}
@@ -69,4 +70,5 @@ spec:
           name: {{ include "prometheus-benchmark.fullname" $ }}-alertmanager-cm
 ---
 {{- end }}
+{{ end }}
 {{ end }}

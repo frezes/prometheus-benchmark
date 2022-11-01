@@ -1,4 +1,5 @@
 {{ range $rsName, $rs := .Values.remoteStorages }}
+{{- if $rs.writeURL -}}
 {{ range $replica := until ($.Values.writeReplicas | default 1 | int) }}
 apiVersion: apps/v1
 kind: Deployment
@@ -149,5 +150,6 @@ spec:
       - name: nginx-empty
         emptyDir: {}
 ---
+{{ end }}
 {{ end }}
 {{ end }}

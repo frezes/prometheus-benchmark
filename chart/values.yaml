@@ -10,7 +10,7 @@ nodeSelector: {}
 # Every nodeexporter exposes around 1230 unique metrics, so when targetsCount
 # is set to 1000, then the benchmark generates around 1230*1000=1.23M active time series.
 # See also writeReplicas and writeURLReplicas options.
-targetsCount: 1000
+targetsCount: 2000
 
 # scrapeInterval defines how frequently to scrape nodeexporter targets.
 # This option allows to configure data ingestion rate per every remoteStorages.
@@ -56,13 +56,17 @@ writeConcurrency: 0
 # See also writeURLReplicas option.
 writeReplicas: 1
 
+# readReplicas like writeReplicas.
+# This option is useful for scaling the readers horizontally.
+readReplicas: 1
+
 # writeReplicaMem is the memory limit per each pod writer.
 # See writeReplicas option.
-writeReplicaMem: "4Gi"
+writeReplicaMem: "8Gi"
 
 # writeReplicaCPU is the CPU limit per each pod writer.
 # See writeReplicas option.
-writeReplicaCPU: 2
+writeReplicaCPU: 4
 
 # remoteStorages contains a named list of Prometheus-compatible systems to test.
 # These systems must support data ingestion via Prometheus remote_write protocol.
@@ -77,7 +81,7 @@ remoteStorages:
     # For example, the following urls may be used for testing VictoriaMetrics:
     # - http://<victoriametrics-addr>:8428/api/v1/write for single-node VictoriaMetrics
     # - http://<vminsert-addr>:8480/insert/0/prometheus/api/v1/write for cluster VictoriaMetrics
-    writeURL: "http://victoria-metrics-victoria-metrics-cluster-vminsert.default.svc.cluster.local:8480/insert/0/prometheus/api/v1/write"
+    writeURL: "http://gateway-whizard-operated.kubesphere-monitoring-system.svc:9090/host/api/v1/receive"
     # writeURLReplicas is an optional number of writeURL replicas to send data to.
     # A unique `url_replica` label is added to every writeURL replica via `extra_label` query arg
     # in order to generate unique time series.
@@ -91,7 +95,7 @@ remoteStorages:
     # For example, the following urls may be used for testing query performance:
     # - http://<victoriametrics-addr>:8428/ for single-node VictoriaMetrics
     # - http://<vmselect-addr>:8481/select/0/prometheus/ for cluster VictoriaMetrics
-    readURL: ""
+    readURL: "http://query-whizard-operated.kubesphere-monitoring-system.svc:10902"
     # writeBearerToken is an optional bearer token to use when writing data to writeURL.
     writeBearerToken: ""
     # readBearerToken is an optional bearer token to use when querying data from readURL.
